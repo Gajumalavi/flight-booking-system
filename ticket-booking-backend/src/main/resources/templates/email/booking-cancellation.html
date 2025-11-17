@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Booking Cancellation</title>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(45deg, #E33069 30%, #9C27B0 90%);
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 8px 8px;
+        }
+        .booking-details {
+            background-color: #f5f8fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .flight-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .location {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .time {
+            color: #666;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #FF7F23;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .warning {
+            font-weight: bold;
+            color: #f44336;
+        }
+        .booking-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        .status-cancelled {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .airport-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="Flight Booking System Logo" class="logo" />
+            <h1>Booking Cancelled</h1>
+        </div>
+        
+        <div class="content">
+            <p>Dear <span th:text="${user.firstName != null ? user.firstName : 'Valued Customer'}">Valued Customer</span>,</p>
+            
+            <p>Your flight booking has been <span class="warning">cancelled</span> as requested. Here are the details of the cancelled booking:</p>
+            
+            <div class="booking-details">
+                <p>Booking Reference: <span class="booking-id" th:text="'#' + ${booking.id}">12345</span></p>
+                <p>Status: <span class="status-cancelled" th:text="${booking.status}">CANCELLED</span></p>
+                
+                <div class="flight-info">
+                    <div>
+                        <div class="location" th:text="${booking.flight.origin}">DEL</div>
+                        <div class="airport-details">
+                            <span th:if="${booking.flight.originCity != null}" th:text="${booking.flight.originCity + (booking.flight.originState != null ? ', ' + booking.flight.originState : '')}">Delhi, Delhi</span>
+                            <br th:if="${booking.flight.originName != null}" />
+                            <span th:if="${booking.flight.originName != null}" th:text="${booking.flight.originName}">Indira Gandhi International Airport</span>
+                        </div>
+                        <div class="time" th:text="${formattedDepartureTime}">Wed, Jan 10, 2024 10:30 AM</div>
+                    </div>
+                    <div>➔</div>
+                    <div>
+                        <div class="location" th:text="${booking.flight.destination}">BOM</div>
+                        <div class="airport-details">
+                            <span th:if="${booking.flight.destinationCity != null}" th:text="${booking.flight.destinationCity + (booking.flight.destinationState != null ? ', ' + booking.flight.destinationState : '')}">Mumbai, Maharashtra</span>
+                            <br th:if="${booking.flight.destinationName != null}" />
+                            <span th:if="${booking.flight.destinationName != null}" th:text="${booking.flight.destinationName}">Chhatrapati Shivaji Maharaj International Airport</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>Flight:</strong> <span th:text="${booking.flight.airline + ' ' + booking.flight.flightNumber}">AI101</span></p>
+                
+                <!-- Passenger Information -->
+                <div th:if="${hasPassengers}">
+                    <p><strong>Passengers:</strong></p>
+                    <div>
+                        <span th:each="passenger, iterStat : ${passengerNames}">
+                            <span th:text="${passenger}">John Doe</span>
+                            <span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Seat Information if no passengers -->
+                <div th:if="${!hasPassengers}">
+                    <p><strong>Seats:</strong></p>
+                    <div th:text="${seatNumbers}">A1, A2</div>
+                </div>
+            </div>
+            
+            <p><strong>Refund Information:</strong></p>
+            <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #9C27B0; margin: 15px 0; border-radius: 4px;">
+                <p><strong>For paid bookings:</strong> The full amount paid for this booking will be refunded to your original payment method (credit/debit card or wallet) within 3-4 business days.</p>
+                <p><strong>Refund Status:</strong> Your refund has been initiated. No further action is required from your side.</p>
+                <p><strong>Refund Reference:</strong> <span th:text="'REF-' + ${booking.id}">REF-12345</span></p>
+            </div>
+            
+            <p>If you do not receive your refund within 5 business days or have any questions, please contact our customer support immediately at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@flightbooking.com</a>.</p>
+            
+            <p>You can book another flight by clicking the button below:</p>
+            
+            <a class="button" href="http://localhost:3000/flights">Book New Flight</a>
+            
+            <p>Thank you for your understanding.</p>
+            
+            <p>Best regards,<br>Flight Booking Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Flight Booking System. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html> 

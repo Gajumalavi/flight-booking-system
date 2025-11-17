@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Your Flight Ticket</title>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(45deg, #E33069 30%, #9C27B0 90%);
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 8px 8px;
+        }
+        .booking-details {
+            background-color: #f5f8fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #FF7F23;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        .booking-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        .attachment-note {
+            background-color: #f5f8fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FF7F23;
+            margin: 15px 0;
+        }
+        .airport-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .location-box {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="Flight Booking System Logo" class="logo" />
+            <h1>Your Flight Ticket</h1>
+        </div>
+        
+        <div class="content">
+            <p>Dear <span th:text="${user.firstName != null ? user.firstName : 'Valued Customer'}">Valued Customer</span>,</p>
+            
+            <p>Thank you for booking with us! Attached to this email, you will find your flight ticket for booking reference <span class="booking-id" th:text="'#' + ${booking.id}">12345</span>.</p>
+            
+            <div class="attachment-note">
+                <p><strong>Note:</strong> Please <strong>print</strong> this ticket or keep it accessible on your mobile device during your journey. You may be required to present it along with a valid ID at the airport.</p>
+            </div>
+            
+            <p>For your convenience, you can also access your booking details and download your ticket again by clicking the button below:</p>
+            
+            <a class="button" th:href="'http://localhost:3000/booking-confirmation/' + ${booking.id}">View Booking</a>
+            
+            <div class="booking-details">
+                <p><strong>Booking Summary:</strong></p>
+                <p><strong>Flight:</strong> <span th:text="${booking.flight.airline + ' ' + booking.flight.flightNumber}">AI101</span></p>
+                
+                <p><strong>From:</strong></p>
+                <div class="location-box">
+                    <span th:text="${booking.flight.origin}">DEL</span>
+                    <div class="airport-details">
+                        <span th:if="${booking.flight.originCity != null}" th:text="${booking.flight.originCity + (booking.flight.originState != null ? ', ' + booking.flight.originState : '')}">Delhi, Delhi</span>
+                        <br th:if="${booking.flight.originName != null}" />
+                        <span th:if="${booking.flight.originName != null}" th:text="${booking.flight.originName}">Indira Gandhi International Airport</span>
+                    </div>
+                </div>
+                
+                <p><strong>To:</strong></p>
+                <div class="location-box">
+                    <span th:text="${booking.flight.destination}">BOM</span>
+                    <div class="airport-details">
+                        <span th:if="${booking.flight.destinationCity != null}" th:text="${booking.flight.destinationCity + (booking.flight.destinationState != null ? ', ' + booking.flight.destinationState : '')}">Mumbai, Maharashtra</span>
+                        <br th:if="${booking.flight.destinationName != null}" />
+                        <span th:if="${booking.flight.destinationName != null}" th:text="${booking.flight.destinationName}">Chhatrapati Shivaji Maharaj International Airport</span>
+                    </div>
+                </div>
+                
+                <p><strong>Passenger(s):</strong>
+                    <span th:if="${booking.passengers != null and !booking.passengers.empty}">
+                        <th:block th:each="passenger, iterStat : ${booking.passengers}">
+                            <span th:text="${passenger.firstName} + ' ' + ${passenger.lastName}"></span><span th:if="${!iterStat.last}">, </span>
+                        </th:block>
+                    </span>
+                    <span th:if="${booking.passengers == null or booking.passengers.empty}">
+                        Not specified
+                    </span>
+                </p>
+            </div>
+            
+            <p>If you have any questions or need assistance, please contact our customer support at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@flightbooking.com</a>.</p>
+            
+            <p>We wish you a pleasant journey!</p>
+            
+            <p>Best regards,<br>Flight Booking Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Flight Booking System. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html> 

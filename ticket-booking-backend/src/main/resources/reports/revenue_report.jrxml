@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="RevenueReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30"
+              topMargin="30" bottomMargin="30">
+    <property name="ireport.scriptlethandling" value="0"/>
+    <property name="ireport.encoding" value="UTF-8"/>
+    <import value="net.sf.jasperreports.engine.*"/>
+    <import value="java.util.*"/>
+    <import value="net.sf.jasperreports.engine.data.*"/>
+    
+    <style name="tableHeader" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="12" isBold="true"/>
+    <style name="tableRow" forecolor="#000000" backcolor="#FFFFFF" fontSize="12" isBold="false"/>
+    <style name="alternateRow" forecolor="#000000" backcolor="#F0F0F0" fontSize="12" isBold="false"/>
+    <style name="title" forecolor="#3366CC" fontSize="20" isBold="true"/>
+    <style name="sectionHeader" forecolor="#000000" fontSize="14" isBold="true"/>
+    
+    <parameter name="reportType" class="java.lang.String"/>
+    
+    <field name="periodTotalRevenue" class="java.math.BigDecimal"/>
+    <field name="periodTotalBookings" class="java.lang.Integer"/>
+    <field name="periodAverageBookingValue" class="java.math.BigDecimal"/>
+    <field name="revenueGrowth" class="java.math.BigDecimal"/>
+    
+    <title>
+        <band height="100" splitType="Stretch">
+            <textField>
+                <reportElement style="title" x="0" y="10" width="535" height="40"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="22"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{reportType} + " Revenue Report"]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="60" width="535" height="1"/>
+                <graphicElement pen="2Point"/>
+            </line>
+            <textField pattern="MMMM d, yyyy">
+                <reportElement x="0" y="70" width="535" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Generated on " + new java.text.SimpleDateFormat("MMMM d, yyyy").format(new java.util.Date())]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <pageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="10" width="535" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    
+    <summary>
+        <band height="200" splitType="Stretch">
+            <rectangle radius="10">
+                <reportElement x="0" y="10" width="535" height="180" backcolor="#F9F9F9"/>
+                <graphicElement pen="Thin"/>
+            </rectangle>
+            
+            <staticText>
+                <reportElement style="sectionHeader" x="20" y="20" width="495" height="30"/>
+                <textElement>
+                    <font size="16"/>
+                </textElement>
+                <text><![CDATA[Revenue Summary]]></text>
+            </staticText>
+            
+            <line>
+                <reportElement x="20" y="50" width="495" height="1"/>
+                <graphicElement pen="Dotted"/>
+            </line>
+            
+            <!-- Table header -->
+            <rectangle>
+                <reportElement style="tableHeader" x="20" y="60" width="240" height="25"/>
+            </rectangle>
+            <rectangle>
+                <reportElement style="tableHeader" x="260" y="60" width="255" height="25"/>
+            </rectangle>
+            <staticText>
+                <reportElement style="tableHeader" x="20" y="60" width="240" height="25"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Metric]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="tableHeader" x="260" y="60" width="255" height="25"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Value]]></text>
+            </staticText>
+            
+            <!-- Row 1 - Total Revenue -->
+            <rectangle>
+                <reportElement style="tableRow" x="20" y="85" width="240" height="25"/>
+            </rectangle>
+            <rectangle>
+                <reportElement style="tableRow" x="260" y="85" width="255" height="25"/>
+            </rectangle>
+            <staticText>
+                <reportElement style="tableRow" x="25" y="85" width="235" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Revenue]]></text>
+            </staticText>
+            <textField>
+                <reportElement style="tableRow" x="265" y="85" width="250" height="25"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA["INR " + new java.text.DecimalFormat("#,##0.00").format($F{periodTotalRevenue})]]></textFieldExpression>
+            </textField>
+            
+            <!-- Row 2 - Total Bookings -->
+            <rectangle>
+                <reportElement style="alternateRow" x="20" y="110" width="240" height="25"/>
+            </rectangle>
+            <rectangle>
+                <reportElement style="alternateRow" x="260" y="110" width="255" height="25"/>
+            </rectangle>
+            <staticText>
+                <reportElement style="alternateRow" x="25" y="110" width="235" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Bookings]]></text>
+            </staticText>
+            <textField>
+                <reportElement style="alternateRow" x="265" y="110" width="250" height="25"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{periodTotalBookings}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Row 3 - Average Booking Value -->
+            <rectangle>
+                <reportElement style="tableRow" x="20" y="135" width="240" height="25"/>
+            </rectangle>
+            <rectangle>
+                <reportElement style="tableRow" x="260" y="135" width="255" height="25"/>
+            </rectangle>
+            <staticText>
+                <reportElement style="tableRow" x="25" y="135" width="235" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Average Booking Value]]></text>
+            </staticText>
+            <textField>
+                <reportElement style="tableRow" x="265" y="135" width="250" height="25"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA["INR " + new java.text.DecimalFormat("#,##0.00").format($F{periodAverageBookingValue})]]></textFieldExpression>
+            </textField>
+            
+            <!-- Row 4 - Revenue Growth -->
+            <rectangle>
+                <reportElement style="alternateRow" x="20" y="160" width="240" height="25"/>
+            </rectangle>
+            <rectangle>
+                <reportElement style="alternateRow" x="260" y="160" width="255" height="25"/>
+            </rectangle>
+            <staticText>
+                <reportElement style="alternateRow" x="25" y="160" width="235" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Revenue Growth]]></text>
+            </staticText>
+            <textField>
+                <reportElement style="alternateRow" x="265" y="160" width="250" height="25"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{revenueGrowth} + "%"]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport> 

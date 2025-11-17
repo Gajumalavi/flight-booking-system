@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Booking Confirmation</title>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(45deg, #E33069 30%, #9C27B0 90%);
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 8px 8px;
+        }
+        .booking-details {
+            background-color: #f5f8fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .flight-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .location {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .time {
+            color: #666;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #FF7F23;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        .booking-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #9C27B0;
+        }
+        .passenger-list {
+            margin: 15px 0;
+        }
+        .passenger {
+            margin-bottom: 5px;
+        }
+        .airport-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="Flight Booking System Logo" class="logo" />
+            <h1>Booking Confirmed!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Dear <span th:text="${user.firstName != null ? user.firstName : 'Valued Customer'}">Valued Customer</span>,</p>
+            
+            <p>Your flight booking has been confirmed! Below are your booking details:</p>
+            
+            <div class="booking-details">
+                <p>Booking Reference: <span class="booking-id" th:text="'#' + ${booking.id}">12345</span></p>
+                
+                <div class="flight-info">
+                    <div>
+                        <div class="location" th:text="${booking.flight.origin}">DEL</div>
+                        <div class="airport-details">
+                            <span th:if="${booking.flight.originCity != null}" th:text="${booking.flight.originCity + (booking.flight.originState != null ? ', ' + booking.flight.originState : '')}">Delhi, Delhi</span>
+                            <br th:if="${booking.flight.originName != null}" />
+                            <span th:if="${booking.flight.originName != null}" th:text="${booking.flight.originName}">Indira Gandhi International Airport</span>
+                        </div>
+                        <div class="time" th:text="${formattedDepartureTime}">Wed, Jan 10, 2024 10:30 AM</div>
+                    </div>
+                    <div>➔</div>
+                    <div>
+                        <div class="location" th:text="${booking.flight.destination}">BOM</div>
+                        <div class="airport-details">
+                            <span th:if="${booking.flight.destinationCity != null}" th:text="${booking.flight.destinationCity + (booking.flight.destinationState != null ? ', ' + booking.flight.destinationState : '')}">Mumbai, Maharashtra</span>
+                            <br th:if="${booking.flight.destinationName != null}" />
+                            <span th:if="${booking.flight.destinationName != null}" th:text="${booking.flight.destinationName}">Chhatrapati Shivaji Maharaj International Airport</span>
+                        </div>
+                        <div class="time" th:text="${formattedArrivalTime}">Wed, Jan 10, 2024 12:30 PM</div>
+                    </div>
+                </div>
+                
+                <p><strong>Flight:</strong> <span th:text="${booking.flight.airline + ' ' + booking.flight.flightNumber}">AI101</span></p>
+                <p><strong>Status:</strong> <span class="highlight" th:text="${booking.status}">CONFIRMED</span></p>
+                
+                <!-- Passenger Information -->
+                <div th:if="${booking.passengers != null && !booking.passengers.isEmpty()}">
+                    <p><strong>Passengers:</strong></p>
+                    <div class="passenger-list">
+                        <div class="passenger" th:each="passenger : ${booking.passengers}">
+                            <span th:text="${passenger.firstName + ' ' + passenger.lastName}">John Doe</span>
+                            <span th:if="${passenger.seat != null}"> - Seat: <span th:text="${passenger.seat.seatNumber}">A1</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Seat Information if no passengers -->
+                <div th:if="${booking.passengers == null || booking.passengers.isEmpty()}">
+                    <p><strong>Seats:</strong></p>
+                    <div th:if="${booking.seats != null && !booking.seats.isEmpty()}">
+                        <span th:each="seat, iterStat : ${booking.seats}">
+                            <span th:text="${seat.seatNumber}">A1</span><span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </div>
+                    <div th:if="${booking.seats == null || booking.seats.isEmpty()}" th:text="${#strings.arrayJoin(booking.seatIds, ', ')}">A1, A2</div>
+                </div>
+            </div>
+            
+            <p>You can view your booking details and download your ticket by clicking the button below:</p>
+            
+            <a class="button" th:href="'http://localhost:3000/booking-confirmation/' + ${booking.id}">View Booking</a>
+            
+            <p>If you have any questions or need to make changes to your booking, please contact our customer support at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@flightbooking.com</a>.</p>
+            
+            <p>Thank you for choosing our service!</p>
+            
+            <p>Best regards,<br>Flight Booking Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 Flight Booking System. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html> 
