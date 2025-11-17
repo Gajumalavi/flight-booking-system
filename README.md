@@ -1,2 +1,3 @@
 # flight-booking-system
-This system provides an end-to-end solution for managing flight schedules and passenger bookings . It aims to offer a smooth user experience for searching, reserving, and cancelling flights, coupled with a robust admin interface for flight and route management.
+
+This project is a comprehensive and scalable **Flight Management and Booking System** developed in Java. It provides a robust platform for airline administrators to manage flight schedules and routes, while offering customers an intuitive web interface for searching, booking, and managing their flight reservations.
